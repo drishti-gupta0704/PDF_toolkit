@@ -18,3 +18,4 @@ router.post("/upload-multiple", upload.array("files", 5), uploadMultiple);
 router.post("/merge", upload.array("files", 10), mergeFiles);
 
 module.exports = router;
+

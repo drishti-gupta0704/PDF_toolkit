@@ -1,5 +1,6 @@
 
 const { PDFDocument } = require("pdf-lib");
+const { exec } = require("child_process"); //day 3 task 
 const fs = require("fs");
 const path = require("path");
 
@@ -31,6 +32,32 @@ async function mergePDFs(files) {
   return outputFileName;
 }
 
+
+
+
+
+function compressPDF(inputPath, quality = "screen") {
+  return new Promise((resolve, reject) => {
+    const outputFileName = `compressed-${Date.now()}.pdf`;
+    const outputPath = path.join("outputs", outputFileName);
+
+    const command = `gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \
+-dPDFSETTINGS=/${quality} \
+-dNOPAUSE -dQUIET -dBATCH \
+-sOutputFile=${outputPath} ${inputPath}`;
+
+    exec(command, (error) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(outputFileName);
+    });
+  });
+}
+
+
 module.exports = {
   mergePDFs,
+  compressPDF,
 };
+
