@@ -72,21 +72,36 @@ async function extractText(filePath) {
 }
 
 
+// async function summarizeText(text) {
+//   const response = await openai.chat.completions.create({
+//     model: "gpt-4.1-mini",
+//     messages: [
+//       {
+//         role: "user",
+//         content: `Summarize the following PDF content in clear points:\n${text}`,
+//       },
+//     ],
+//   });
+
+//   return response.choices[0].message.content;
+  
+// }
+
+// async function summarizeText(text) {
+//   return text.slice(0, 300) + "...";
+// }
+
+
+
 async function summarizeText(text) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4.1-mini",
-    messages: [
-      {
-        role: "user",
-        content: `Summarize the following PDF content in clear points:\n${text}`,
-      },
-    ],
-  });
+  if (!text || text.trim().length === 0) {
+    return "No readable text found in PDF (possibly scanned document).";
+  }
 
-  return response.choices[0].message.content;
+  const cleaned = text.replace(/\s+/g, " ").trim();
+  const sentences = cleaned.split(".");
+  return sentences.slice(0, 3).join(".") + ".";
 }
-
-
 
 module.exports = {
   mergePDFs,
