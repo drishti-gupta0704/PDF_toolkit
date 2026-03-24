@@ -8,15 +8,16 @@ const {
   uploadMultiple, 
   mergeFiles,
   compressFile, 
+  summarizePDF,  
 } = require("../controllers/fileController");
 
-// single file
+
 router.post("/upload", upload.single("file"), uploadSingle);
 
-// multiple files
 router.post("/upload-multiple", upload.array("files", 5), uploadMultiple);
 router.post("/compress", upload.single("file"), compressFile);
 router.post("/merge", upload.array("files", 10), mergeFiles);
+router.post("/summarize", upload.single("file"), summarizePDF);
 
 module.exports = router;
 
