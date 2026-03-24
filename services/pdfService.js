@@ -3,6 +3,8 @@ const { PDFDocument } = require("pdf-lib");
 const { exec } = require("child_process"); //day 3 task 
 const fs = require("fs");
 const path = require("path");
+const pdfParse = require("pdf-parse"); //day 4 task
+const OpenAI = require("openai");
 
 async function mergePDFs(files) {
   const mergedPdf = await PDFDocument.create();
@@ -56,8 +58,40 @@ function compressPDF(inputPath, quality = "screen") {
 }
 
 
+
+
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+
+async function extractText(filePath) {
+  const data = await pdfParse(fs.readFileSync(filePath));
+  return data.text;
+}
+
+
+async function summarizeText(text) {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4.1-mini",
+    messages: [
+      {
+        role: "user",
+        content: `Summarize the following PDF content in clear points:\n${text}`,
+      },
+    ],
+  });
+
+  return response.choices[0].message.content;
+}
+
+
+
 module.exports = {
   mergePDFs,
   compressPDF,
+  extractText,
+  summarizeText,
 };
 
