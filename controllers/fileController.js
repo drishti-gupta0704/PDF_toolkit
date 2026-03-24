@@ -1,5 +1,6 @@
 
-const { mergePDFs,compressPDF } = require("../services/pdfService");
+const { mergePDFs,compressPDF, extractText,
+  summarizeText } = require("../services/pdfService");
 
 exports.uploadSingle = (req, res) => {
   try {
@@ -70,6 +71,32 @@ exports.compressFile = async (req, res) => {
     res.status(200).json({
       message: "PDF compressed successfully",
       downloadUrl: `http://localhost:4000/outputs/${outputFileName}`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+
+exports.summarizePDF = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        message: "No file uploaded",
+      });
+    }
+
+    const text = await extractText(req.file.path);
+    const summary = await summarizeText(text);
+
+    res.status(200).json({
+      message: "PDF summarized successfully",
+      summary,
     });
   } catch (error) {
     res.status(500).json({
